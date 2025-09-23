@@ -1,0 +1,165 @@
+﻿@page "/timeline"
+@using HistoryOfScience.Components.Pages.Component
+@using HistoryOfScience.Models
+@inject HttpClient Http
+
+<PageTitle>Историческая временная шкала</PageTitle>
+
+<h3>Исторические личности</h3>
+
+@if (personalities == null)
+{
+    <p>Загрузка данных...</p>
+}
+else
+{
+    <Line Personalities="personalities" />
+}
+
+@code {
+    private List<Personality> personalities;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Или используем тестовые данные
+        if (personalities == null || personalities.Count == 0)
+        {
+            personalities = GetSampleData();
+        }
+    }
+
+    private List<Personality> GetSampleData()
+    {
+        return new List<Personality>
+        {
+            new() {
+                Id = 1,
+                Name = "Юлий",
+                Surname = "Цезарь",
+                StartTime = -200,
+                NumberYears = 100,
+                Description = "Римский полководец"
+            },
+            new() {
+                Id = 1,
+                Name = "Юлий",
+                Surname = "Цезарь",
+                StartTime = -10000,
+                NumberYears = 200,
+                Description = "Римский полководец"
+            },
+            new() { 
+                Id = 1, 
+                Name = "Юлий", 
+                Surname = "Цезарь", 
+                StartTime = -100, 
+                NumberYears = 56, 
+                Description = "Римский полководец" 
+            },
+            new() {
+                Id = 1,
+                Name = "Юлий",
+                Surname = "Цезарь",
+                StartTime = -100,
+                NumberYears = 56,
+                Description = "Римский полководец"
+            },
+            new() {
+                Id = 1,
+                Name = "Юлий",
+                Surname = "Цезарь",
+                StartTime = -100,
+                NumberYears = 56,
+                Description = "Римский полководец"
+            },
+            new() {
+                Id = 1,
+                Name = "Юлий",
+                Surname = "Цезарь",
+                StartTime = -100,
+                NumberYears = 56,
+                Description = "Римский полководец"
+            },
+            new() { 
+                Id = 1, 
+                Name = "Юлий", 
+                Surname = "Цезарь", 
+                StartTime = -100, 
+                NumberYears = 56, 
+                Description = "Римский полководец" 
+            },
+            new() { 
+                Id = 1, 
+                Name = "Юлий", 
+                Surname = "Цезарь", 
+                StartTime = -100, 
+                NumberYears = 56, 
+                Description = "Римский полководец" 
+            },
+            new() {
+                Id = 1,
+                Name = "Юлий",
+                Surname = "Цезарь",
+                StartTime = -100,
+                NumberYears = 56,
+                Description = "Римский полководец"
+            },
+            new() {
+                Id = 1,
+                Name = "Юлий",
+                Surname = "Цезарь",
+                StartTime = -100,
+                NumberYears = 56,
+                Description = "Римский полководец"
+            },
+            new() {
+                Id = 1,
+                Name = "Юлий",
+                Surname = "Цезарь",
+                StartTime = -100,
+                NumberYears = 56,
+                Description = "Римский полководец"
+            },
+            new() {
+                Id = 1,
+                Name = "Юлий",
+                Surname = "Цезарь",
+                StartTime = -100,
+                NumberYears = 56,
+                Description = "Римский полководец"
+            },
+            new() {
+                Id = 1,
+                Name = "Юлий",
+                Surname = "Цезарь",
+                StartTime = -100,
+                NumberYears = 56,
+                Description = "Римский полководец"
+            },
+            new() {
+                Id = 1,
+                Name = "Юлий",
+                Surname = "Цезарь",
+                StartTime = -100,
+                NumberYears = 56,
+                Description = "Римский полководец"
+            },
+            new() { 
+                Id = 2, 
+                Name = "Леонардо", 
+                Surname = "да Винчи", 
+                StartTime = 1452, 
+                NumberYears = 67, 
+                Description = "Итальянский художник" 
+            },
+            new() { 
+                Id = 3, 
+                Name = "Альберт", 
+                Surname = "Эйнштейн", 
+                StartTime = 1879, 
+                NumberYears = 76, 
+                Description = "Физик-теоретик" 
+            }
+        };
+    }
+}

@@ -1,0 +1,179 @@
+﻿@using System.Globalization
+@using HistoryOfScience.Models
+@inject IJSRuntime JSRuntime
+
+<div class="timeline-container">
+    <div class="timeline-scroll" @ref="_timelineScroll">
+        <div class="timeline" style="width: @(_totalWidth)px; height: @(_totalHeight)px">
+            <div>
+                <!-- Маркеры веков -->
+                @foreach (var century in _centuries)
+                {
+                    <div class="century-marker" style="left: @(GetPosition(century))px">
+                        <div class="century-label">@FormatYear(century)</div>
+                        <div class="century-line"></div>
+                    </div>
+                }
+            </div>
+            
+            <div>
+                <!-- Линии жизни персоналий -->
+                @foreach (var person in Personalities)
+                {
+                    var startPos = GetPosition(person.StartTime);
+                    var endPos = GetPosition(person.StartTime + person.NumberYears);
+                    var width = Math.Max(2, endPos - startPos);
+
+                    // Находим свободную строку для этого временного промежутка
+                    int row = FindAvailableRow(person.StartTime, person.StartTime + person.NumberYears, _occupiedRows) * personLineHeight + 17;
+                    <div class="person-line"
+                         @onclick="() => OnPersonClick(person)"
+                         style="left: @(startPos)px; width: @(width)px; height: @(personLineHeight)px; top: @(row)px"
+                         title="@person.Name @person.Surname (@FormatYear(person.StartTime) - @FormatYear(person.StartTime + person.NumberYears))">
+                        <div class="person-tooltip">
+                            <strong>@person.Name @person.Surname</strong>
+                            <br />
+                            @FormatYear(person.StartTime) - @FormatYear(person.StartTime + person.NumberYears)
+                            <br />
+                            @person.Description
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<Personality> Personalities { get; set; } = new();
+
+    public Dictionary<int, List<(int start, int end)>> _occupiedRows = new();
+
+    private ElementReference _timelineScroll;
+    private const int PixelsPerYear = 4;
+    private const int personLineHeight = 100;
+    private int maxTop = 0;
+    private int StartYearBC = -500;
+    private int _currentYear = DateTime.Now.Year;
+    private int _totalWidth;
+    private int _totalHeight = 1000;
+    private List<int> _centuries = new();
+
+    protected override void OnInitialized()
+    {
+        StartYearBC = Personalities.Min(x => x.StartTime);
+
+        CalculateTimelineDimensions();
+        base.OnInitialized();
+    }
+
+    private void OnPersonClick(Personality person)
+    {
+        Counter counter = new Counter();
+        
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ScrollToCurrentYear();
+        }
+    }
+
+    private void CalculateTimelineDimensions()
+    {
+        // Рассчитываем общую ширину таймлайна
+        _totalWidth = (_currentYear - StartYearBC) * PixelsPerYear;
+
+        // Генерируем маркеры веков
+        _centuries.Clear();
+        for (int year = StartYearBC; year <= _currentYear; year += 100)
+        {
+            if (year % 100 == 0)
+            {
+                _centuries.Add(year);
+            }
+        }
+
+        _occupiedRows = new Dictionary<int, List<(int start, int end)>>();
+        var personRows = new Dictionary<Personality, int>();
+
+        // Сначала сортируем персоналий по дате начала
+        Personalities = Personalities
+            .OrderBy(p => p.StartTime)
+            .ThenBy(p => p.NumberYears)
+            .ToList();
+
+        // Сначала находим максимальную строку для всех персоналий
+        int maxRow = 0;
+        foreach (var person in Personalities)
+        {
+            int row = FindAvailableRow(person.StartTime, person.StartTime + person.NumberYears, _occupiedRows);
+            maxRow = Math.Max(maxRow, row);
+        }
+
+        _occupiedRows.Clear();
+
+        // Вычисляем общую высоту с учетом максимальной строки
+        _totalHeight = (maxRow + 1) * personLineHeight + 50; // +50 для отступов
+    }
+
+    private double GetPosition(int year)
+    {
+        return (year - StartYearBC) * PixelsPerYear;
+    }
+
+    private string FormatYear(int year)
+    {
+        if (year < 0)
+        {
+            return $"{Math.Abs(year)} до н.э.";
+        }
+        else if (year == 0)
+        {
+            return "н.э.";
+        }
+        else
+        {
+            return year.ToString();
+        }
+    }
+
+    private async Task ScrollToCurrentYear()
+    {
+        var currentYearPos = GetPosition(_currentYear);
+        await JSRuntime.InvokeVoidAsync("scrollTimeline", _timelineScroll, currentYearPos);
+    }
+
+    private int FindAvailableRow(int startTime, int endTime, Dictionary<int, List<(int start, int end)>> occupiedRows)
+    {
+        for (int row = 0; row < 1000; row++) // Увеличим лимит
+        {
+            if (!occupiedRows.ContainsKey(row))
+            {
+                occupiedRows[row] = new List<(int start, int end)>();
+                occupiedRows[row].Add((startTime, endTime));
+                return row;
+            }
+
+            bool canUseRow = true;
+            foreach (var occupied in occupiedRows[row])
+            {
+                if (!(endTime <= occupied.start || startTime >= occupied.end))
+                {
+                    canUseRow = false;
+                    break;
+                }
+            }
+
+            if (canUseRow)
+            {
+                occupiedRows[row].Add((startTime, endTime));
+                return row;
+            }
+        }
+        return 0;
+    }
+}
