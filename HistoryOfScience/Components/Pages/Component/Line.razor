@@ -1,5 +1,7 @@
 ﻿@using System.Globalization
 @using HistoryOfScience.Models
+@using Microsoft.AspNetCore.Components.Web
+@rendermode RenderMode.InteractiveServer
 @inject IJSRuntime JSRuntime
 
 <div class="timeline-container">
@@ -17,7 +19,8 @@
             </div>
             
             <div>
-                <!-- Линии жизни персоналий -->
+                @{_occupiedRows.Clear();}
+                <!-- Линии жизни персоны -->
                 @foreach (var person in Personalities)
                 {
                     var startPos = GetPosition(person.StartTime);
@@ -27,7 +30,8 @@
                     // Находим свободную строку для этого временного промежутка
                     int row = FindAvailableRow(person.StartTime, person.StartTime + person.NumberYears, _occupiedRows) * personLineHeight + 17;
                     <div class="person-line"
-                         @onclick="() => OnPersonClick(person)"
+                         id="@(person.Id)"
+                         @onclick="(e) => OnPersonClick(person)"
                          style="left: @(startPos)px; width: @(width)px; height: @(personLineHeight)px; top: @(row)px"
                          title="@person.Name @person.Surname (@FormatYear(person.StartTime) - @FormatYear(person.StartTime + person.NumberYears))">
                         <div class="person-tooltip">
@@ -44,6 +48,8 @@
     </div>
 </div>
 
+<PersonCard @ref="_personCard" Persona="@personality"></PersonCard>
+
 @code {
     [Parameter]
     public List<Personality> Personalities { get; set; } = new();
@@ -59,6 +65,7 @@
     private int _totalWidth;
     private int _totalHeight = 1000;
     private List<int> _centuries = new();
+    private PersonCard _personCard { get; set; } = new();
 
     protected override void OnInitialized()
     {
@@ -68,18 +75,14 @@
         base.OnInitialized();
     }
 
+    private Personality personality;
     private void OnPersonClick(Personality person)
     {
-        Counter counter = new Counter();
-        
-    }
+        if (_personCard == null)
+            _personCard = new();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await ScrollToCurrentYear();
-        }
+        _personCard.Persona = person;
+        _personCard?.Show();
     }
 
     private void CalculateTimelineDimensions()
@@ -139,12 +142,6 @@
         {
             return year.ToString();
         }
-    }
-
-    private async Task ScrollToCurrentYear()
-    {
-        var currentYearPos = GetPosition(_currentYear);
-        await JSRuntime.InvokeVoidAsync("scrollTimeline", _timelineScroll, currentYearPos);
     }
 
     private int FindAvailableRow(int startTime, int endTime, Dictionary<int, List<(int start, int end)>> occupiedRows)

@@ -1,5 +1,49 @@
-﻿<h3>PersonCard</h3>
+﻿@using HistoryOfScience.Components.Pages.Component
+@using HistoryOfScience.Models
+
+<div class="person-card-container flex-row" style="visibility: @(_showCatd);">
+    <div class="flex-container-column">
+        <h3 class="dont-margin">@Persona?.Name @Persona?.Surname @Persona?.Patronymic</h3>
+        <div @onclick="(e) => close()" class="btn-close"/>
+    </div>
+    <div class="flex-container-row">
+        <div class="flex-container-column">
+            @foreach (PersonData data in _personDatas)
+            {
+                
+            }
+        </div>
+        <div>
+            <ContentCard></ContentCard>
+        </div>
+    </div>
+</div>
 
 @code {
+    [Parameter]
+    public Personality? Persona { get; set; }
 
+    private string _showCatd = "hidden";
+    private List<PersonData> _personDatas;
+
+    protected override void OnInitialized()
+    {
+        //запрос с сервера
+        _personDatas = new List<PersonData>()
+        {
+
+        };
+    }
+
+    public void Show()
+    {
+        _showCatd = _showCatd == "hidden" ? "visible" : "hidden";
+        StateHasChanged();
+    }
+
+    private void close()
+    {
+        _showCatd = _showCatd == "hidden" ? "visible" : "hidden";
+        StateHasChanged();
+    }
 }

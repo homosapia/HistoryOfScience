@@ -8,12 +8,10 @@
 
   <ItemGroup>
     <None Remove="Components\Pages\Component\Line.razor.css" />
-    <None Remove="Components\Pages\Component\Line.razor.js" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Components\Pages\Component\Line.razor.css" />
-    <Content Include="Components\Pages\Component\Line.razor.js" />
   </ItemGroup>
 
 </Project>

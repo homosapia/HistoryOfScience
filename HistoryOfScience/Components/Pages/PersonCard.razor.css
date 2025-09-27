@@ -1,0 +1,25 @@
+﻿.person-card-container {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.flex-container-column {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.flex-container-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.dont-margin {
+    margin: 0;
+}
