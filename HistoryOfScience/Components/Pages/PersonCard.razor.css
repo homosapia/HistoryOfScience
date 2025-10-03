@@ -1,23 +1,46 @@
 ﻿.person-card-container {
     top: 50%;
     left: 50%;
+    min-width: 650px;
+    min-height: 350px;
+    max-height: 80%;
+    overflow: overlay;
     position: absolute;
+    transform: translate(-50%, -50%);
     background: white;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-.flex-container-column {
+.flex {
     display: flex;
-    flex-direction: row;
-    align-items: center;
 }
 
 .flex-container-row {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+}
+
+.content-container {
+    padding-left: 10px;
+}
+
+.flex-container-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.item-list {
+    margin-bottom: 5px;
+    width: 100%;
+    cursor: pointer;
+    background: linear-gradient(90deg, #007bff30, #0056b366);
+    border-radius: 7px;
+    min-width: 175px;
 }
 
 .dont-margin {
