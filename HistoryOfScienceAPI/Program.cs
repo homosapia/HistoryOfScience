@@ -1,7 +1,9 @@
 using HistoryOfScienceAPI.DataBase;
 using HistoryOfScienceAPI.DataBase.Repositorys;
+using HistoryOfScienceAPI.Interfaces.Client;
 using HistoryOfScienceAPI.Interfaces.Repositorys;
 using HistoryOfScienceAPI.Interfaces.Services;
+using HistoryOfScienceAPI.LMStudio;
 using HistoryOfScienceAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +16,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddTransient<IPersonService, PersonService>();
 builder.Services.AddTransient<IPersonRepository, PersonRepository>();
+builder.Services.AddTransient<ILMStudioClient, LMStudioClient>();
 
 var app = builder.Build();
 
